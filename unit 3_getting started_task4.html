@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiếng Anh 7 - Unit 3: Exercise 4 Game</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+    canvas#snowCanvas, canvas#fireworksCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    canvas#snowCanvas { z-index: 1; }
+    canvas#fireworksCanvas { z-index: 99; }
+
+    .game-container {
+      position: relative;
+      z-index: 2;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15);
+      width: 100%;
+      max-width: 800px;
+      padding: 30px;
+      border: 3px solid #a5d6a7;
+    }
+    h1 {
+      text-align: center;
+      color: #1b5e20;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #4caf50;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .word-bank {
+      background: #f1f8e9;
+      border: 2px dashed #81c784;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .word-badge {
+      background: #4caf50;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .question-card {
+      background: #fafafa;
+      border-left: 5px solid #66bb6a;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .q-icon { font-size: 32px; }
+    .q-text { font-size: 17px; color: #333; flex-grow: 1; line-height: 1.5; }
+    select {
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #a5d6a7;
+      background: white;
+      color: #2e7d32;
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+    }
+    select:focus { border-color: #2e7d32; }
+    .feedback { font-weight: bold; margin-top: 5px; font-size: 14px; }
+    .correct-fb { color: #2e7d32; }
+    .wrong-fb { color: #c62828; }
+
+    .btn-container { text-align: center; margin-top: 25px; }
+    .btn-submit {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 14px 35px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-submit:hover { background: #1b5e20; transform: translateY(-2px); }
+    .score-board {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1b5e20;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="snowCanvas"></canvas>
+<canvas id="fireworksCanvas"></canvas>
+
+<div class="game-container">
+  <h1>Unit 3: Community Service</h1>
+  <div class="subtitle">Complete the sentences with the correct words or phrases below</div>
+
+  <div class="word-bank">
+    <span class="word-badge">old people</span>
+    <span class="word-badge">homeless children</span>
+    <span class="word-badge">planted</span>
+    <span class="word-badge">litter</span>
+    <span class="word-badge">taught</span>
+  </div>
+
+  <div id="quizForm">
+    <!-- Q1 -->
+    <div class="question-card">
+      <div class="q-icon">👕</div>
+      <div class="q-text">
+        1. We collected clothes and gave them to 
+        <select id="q1">
+          <option value="">-- chọn --</option>
+          <option value="old people">old people</option>
+          <option value="homeless children">homeless children</option>
+          <option value="planted">planted</option>
+          <option value="litter">litter</option>
+          <option value="taught">taught</option>
+        </select>.
+        <div id="fb1" class="feedback"></div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-card">
+      <div class="q-icon">🧹</div>
+      <div class="q-text">
+        2. Those students picked up all the 
+        <select id="q2">
+          <option value="">-- chọn --</option>
+          <option value="old people">old people</option>
+          <option value="homeless children">homeless children</option>
+          <option value="planted">planted</option>
+          <option value="litter">litter</option>
+          <option value="taught">taught</option>
+        </select> on the street.
+        <div id="fb2" class="feedback"></div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-card">
+      <div class="q-icon">👵</div>
+      <div class="q-text">
+        3. We helped 
+        <select id="q3">
+          <option value="">-- chọn --</option>
+          <option value="old people">old people</option>
+          <option value="homeless children">homeless children</option>
+          <option value="planted">planted</option>
+          <option value="litter">litter</option>
+          <option value="taught">taught</option>
+        </select> in the nursing home last Sunday.
+        <div id="fb3" class="feedback"></div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-card">
+      <div class="q-icon">📚</div>
+      <div class="q-text">
+        4. The club members 
+        <select id="q4">
+          <option value="">-- chọn --</option>
+          <option value="old people">old people</option>
+          <option value="homeless children">homeless children</option>
+          <option value="planted">planted</option>
+          <option value="litter">litter</option>
+          <option value="taught">taught</option>
+        </select> maths to primary students during school holidays.
+        <div id="fb4" class="feedback"></div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-card">
+      <div class="q-icon">🌳</div>
+      <div class="q-text">
+        5. We 
+        <select id="q5">
+          <option value="">-- chọn --</option>
+          <option value="old people">old people</option>
+          <option value="homeless children">homeless children</option>
+          <option value="planted">planted</option>
+          <option value="litter">litter</option>
+          <option value="taught">taught</option>
+        </select> a lot of trees in the park last summer.
+        <div id="fb5" class="feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-container">
+    <button class="btn-submit" onclick="checkAnswers()">Kiểm tra đáp án 🚀</button>
+  </div>
+
+  <div id="scoreBoard" class="score-board"></div>
+</div>
+
+<script>
+  // Web Audio API Sound System
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function playWinSound() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
+    notes.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + idx * 0.1);
+      osc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+    });
+  }
+
+  function playEncourageSound() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const notes = [330, 293.66];
+    notes.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.2 + 0.4);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + idx * 0.2);
+      osc.stop(audioCtx.currentTime + idx * 0.2 + 0.4);
+    });
+  }
+
+  // Snow Particle System
+  const snowCanvas = document.getElementById('snowCanvas');
+  const snowCtx = snowCanvas.getContext('2d');
+  let width = snowCanvas.width = window.innerWidth;
+  let height = snowCanvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    width = snowCanvas.width = window.innerWidth;
+    height = snowCanvas.height = window.innerHeight;
+  });
+
+  const flakes = Array.from({ length: 60 }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    r: Math.random() * 3 + 1,
+    d: Math.random() + 0.5
+  }));
+
+  function drawSnow() {
+    snowCtx.clearRect(0, 0, width, height);
+    snowCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    snowCtx.beginPath();
+    flakes.forEach(f => {
+      snowCtx.moveTo(f.x, f.y);
+      snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      f.y += f.d;
+      f.x += Math.sin(f.y / 30) * 0.5;
+      if (f.y > height) {
+        f.y = -5;
+        f.x = Math.random() * width;
+      }
+    });
+    snowCtx.fill();
+    requestAnimationFrame(drawSnow);
+  }
+  drawSnow();
+
+  // Fireworks System
+  const fwCanvas = document.getElementById('fireworksCanvas');
+  const fwCtx = fwCanvas.getContext('2d');
+  fwCanvas.width = window.innerWidth;
+  fwCanvas.height = window.innerHeight;
+
+  let particles = [];
+  function launchFireworks() {
+    particles = [];
+    const colors = ['#ff4081', '#ffd54f', '#66bb6a', '#29b6f6', '#ab47bc'];
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const cx = Math.random() * fwCanvas.width * 0.8 + fwCanvas.width * 0.1;
+        const cy = Math.random() * fwCanvas.height * 0.5 + fwCanvas.height * 0.1;
+        for (let j = 0; j < 50; j++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 5 + 2;
+          particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: 1
+          });
+        }
+      }, i * 200);
+    }
+  }
+
+  function animateFireworks() {
+    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+    particles.forEach((p, idx) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.015;
+      fwCtx.fillStyle = p.color;
+      fwCtx.globalAlpha = Math.max(0, p.alpha);
+      fwCtx.beginPath();
+      fwCtx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      fwCtx.fill();
+      if (p.alpha <= 0) particles.splice(idx, 1);
+    });
+    requestAnimationFrame(animateFireworks);
+  }
+  animateFireworks();
+
+  // Answer Checking Logic
+  const answers = {
+    q1: 'homeless children',
+    q2: 'litter',
+    q3: 'old people',
+    q4: 'taught',
+    q5: 'planted'
+  };
+
+  function checkAnswers() {
+    let score = 0;
+    for (let i = 1; i <= 5; i++) {
+      const userVal = document.getElementById('q' + i).value;
+      const fb = document.getElementById('fb' + i);
+      if (userVal === answers['q' + i]) {
+        score++;
+        fb.textContent = 'Correct! (Chính xác)';
+        fb.className = 'feedback correct-fb';
+      } else {
+        fb.textContent = 'Incorrect! (Đáp án đúng: ' + answers['q' + i] + ')';
+        fb.className = 'feedback wrong-fb';
+      }
+    }
+
+    const sb = document.getElementById('scoreBoard');
+    sb.textContent = 'Kết quả: ' + score + '/5 câu đúng!';
+
+    if (score === 5) {
+      playWinSound();
+      launchFireworks();
+    } else {
+      playEncourageSound();
+    }
+  }
+</script>
+</body>
+</html>
